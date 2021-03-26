@@ -75,12 +75,12 @@ class MainActivity : AppCompatActivity() {
 
         class CustomJavaScriptInterface{
             @JavascriptInterface
-            fun getTitle(html: String) { //위 자바스크립트가 호출되면 여기로 html이 반환됨
+            fun getTitle(title: String) { //위 자바스크립트가 호출되면 여기로 html이 반환됨
                 Log.e("title:??:", "${tv_info_radioTitle.text}")
 
                 this@MainActivity.runOnUiThread(
                     Runnable {
-                        tv_info_radioSubject.text = html //doc.text()
+                        tv_info_radioSubject.text = title
                     }
                 )
             }
@@ -127,16 +127,19 @@ class MainActivity : AppCompatActivity() {
                     var javascriptPlay: String = "javaScript:"
                     var javascriptPause: String = "javaScript:"
                     var javascriptTitle: String = "javaScript:"
+                    var javascriptVolume: String = "javaScript:"
                     val curRadio = getCurRadio(getUrl(), radioList)
                     if (curRadio != null) {
                         when (curRadio.radioType){
                             "SBS" -> {
                                 javascriptPlay =
-                                    "javaScript:document.getElementById(\"sbs-onair-video-element-self_html5_api\").play();"
+                                    "javaScript:document.getElementById('sbs-onair-video-element-self_html5_api').play();"
                                 javascriptPause =
-                                    "javaScript:document.getElementById(\"sbs-onair-video-element-self_html5_api\").pause();"
+                                    "javaScript:document.getElementById('sbs-onair-video-element-self_html5_api').pause();"
                                 javascriptTitle =
                                     "javaScript:window.Android.getTitle(document.getElementsByClassName('oct_ppi_title')[0].innerText);"
+                                javascriptVolume +=
+                                        "document.getElementById('sbs-onair-video-element-self_html5_api').volume=1;"
                             }
                             "KBS" -> {
                                 javascriptPlay = "javaScript:jwplayer('kbs-social-player').play();"
@@ -144,6 +147,7 @@ class MainActivity : AppCompatActivity() {
                                     "javaScript:jwplayer('kbs-social-player').pause();"
                                 javascriptTitle =
                                     "javaScript:window.Android.getTitle(document.getElementById('episode-tit').innerText);"
+                                javascriptVolume += "jwplayer('kbs-social-player').setVolume(100);"
                             }
                             "MBC" -> {
                                 javascriptPlay =
@@ -152,6 +156,8 @@ class MainActivity : AppCompatActivity() {
                                     "javaScript: document.getElementsByClassName('btn-stop')[0].click();"
                                 javascriptTitle =
                                     "javaScript:window.Android.getTitle(document.getElementsByClassName('ui-center')[0].innerText);"
+                                javascriptVolume +=
+                                        "document.getElementById('jarvisAudioPlayer').volume=1;"
                             }
                             "CBS" -> {
                                 javascriptPlay = if (curRadio.radioTitle == "CBS 음악FM") {
@@ -161,6 +167,8 @@ class MainActivity : AppCompatActivity() {
                                 }
                                 javascriptPause = "javaScript: document.getElementById('lbStop').click();"
                                 javascriptTitle = "javaScript:window.Android.getTitle(document.getElementById('ifrInfo').contentWindow.document.getElementsByClassName('text')[0].innerText);"
+                                javascriptVolume +=
+                                        "document.getElementsByClassName('jw-video')[0].volume=1;"
                             }
                         }
                     }
@@ -180,6 +188,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     Handler().postDelayed(Runnable {
+                        wv_backgrounWebview.loadUrl(javascriptVolume)
                         wv_backgrounWebview.loadUrl(javascriptTitle)
                         tv_loading.text = ""
                         //딜레이 후 시작할 코드 작성
