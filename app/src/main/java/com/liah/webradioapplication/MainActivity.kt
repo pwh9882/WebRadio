@@ -1,5 +1,7 @@
 package com.liah.webradioapplication
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -10,6 +12,7 @@ import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.liah.webradioapplication.adapters.RadioListAdapter
 import com.liah.webradioapplication.api.FullscreenableChromeClient
 import com.liah.webradioapplication.api.Radio
@@ -120,6 +123,15 @@ class MainActivity : AppCompatActivity() {
             settings.allowUniversalAccessFromFileURLs = true
             addJavascriptInterface(CustomJavaScriptInterface(), "Android")
 
+            iv_radioInfoImage.setColorFilter(Color.parseColor("#9c9c9c"), PorterDuff.Mode.MULTIPLY)
+//            Color.parseColor("#5c5c5c")
+            iv_radioPlayerImage.setColorFilter(Color.parseColor("#9c9c9c"), PorterDuff.Mode.MULTIPLY)
+            Glide.with(this@MainActivity)
+                .load(R.drawable.info_background)
+                .into(iv_radioInfoImage)
+            Glide.with(this@MainActivity)
+                .load(R.drawable.player_background)
+                .into(iv_radioPlayerImage)
             // 클라이언트
             webViewClient = object : WebViewClient() {
                 override fun onPageFinished(view: WebView, url: String) {
@@ -176,12 +188,12 @@ class MainActivity : AppCompatActivity() {
                     tv_player_btn.setOnClickListener {
                         if(it.tag.toString() == "play"){ // 현재 재생중
                             it.tag = "pause"
-                            it.setBackgroundResource(R.drawable.ic_baseline_play_circle_72)
+                            it.setBackgroundResource(R.drawable.ic_baseline_play_circle_96)
                             wv_backgrounWebview.loadUrl(javascriptPause)
 
                         } else { // 현재 중지
                             it.tag = "play"
-                            it.setBackgroundResource(R.drawable.ic_baseline_pause_circle_72)
+                            it.setBackgroundResource(R.drawable.ic_baseline_pause_circle_96)
                             wv_backgrounWebview.loadUrl(javascriptPlay)
                         }
 

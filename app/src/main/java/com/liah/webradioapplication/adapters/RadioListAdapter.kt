@@ -46,7 +46,7 @@ class RadioListAdapter(private val radioList: Array<Radio>, private val activity
                 activity.tv_loading.text = "로딩중..."
 //                activity.tv_loading.isVisible = true
                 activity.tv_player_btn.tag = "pause"
-                activity.tv_player_btn.setBackgroundResource(R.drawable.ic_baseline_play_circle_72)
+                activity.tv_player_btn.setBackgroundResource(R.drawable.ic_baseline_play_circle_96)
                 activity.tv_player_btn.isClickable = false
             }
 
