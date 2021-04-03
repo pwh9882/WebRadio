@@ -3,7 +3,9 @@ package com.liah.webradioapplication.api
 import android.R
 import android.app.Activity
 import android.content.Context
+import android.media.MediaPlayer
 import android.os.Build
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -13,12 +15,33 @@ import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 
 
-class FullscreenableChromeClient(activity: Activity?) : WebChromeClient() {
+open class FullscreenableChromeClient(activity: Activity?) : WebChromeClient(), MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
     private var mActivity: Activity? = null
     private var mCustomView: View? = null
     private var mCustomViewCallback: CustomViewCallback? = null
     private var mOriginalOrientation = 0
     private var mFullscreenContainer: FrameLayout? = null
+    private var mp: MediaPlayer? = null
+
+    override fun onCompletion(mp: MediaPlayer) {
+        if (this.mp != null) {
+            this.mp!!.release()
+        } else {
+            mp.release()
+        }
+    }
+
+    override fun onPrepared(mp: MediaPlayer?) {
+        this.mp = mp
+        //Utilizing this MediaPlayer Here
+        Log.e("MediaPlayer!!!!!!!", "onPrepared!")
+    }
+
+    override fun onError(mediaPlayer: MediaPlayer?, i: Int, i1: Int): Boolean {
+        //Handle Error stuff here
+        return false
+    }
+
     override fun onShowCustomView(view: View, callback: CustomViewCallback) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             if (mCustomView != null) {
