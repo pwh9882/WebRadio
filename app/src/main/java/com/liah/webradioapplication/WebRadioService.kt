@@ -254,7 +254,7 @@ class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.On
                             .userAgent("Mozilla/5.0 (Linux; U; Android 4.0.3; de-ch; HTC Sensation Build/IML74K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30")
                             .get()
                     var jsonText = doc.text()
-                    jsonText = jsonText.substringAfter("(").substringBefore(")")
+                    jsonText = jsonText.substringAfter("(").substringBefore(");")
                     var jObject = JSONArray(jsonText)
                     titleText = jObject.getJSONObject(radioList.indexOf(radio)).getJSONArray("schedules").getJSONObject(0).get("program_title").toString()
 

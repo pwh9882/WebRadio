@@ -62,7 +62,7 @@ object WebRadioNotification {
                 .setContentIntent(pendingIntent)
                 .setColor(Color.parseColor("#C0C0C0"))
                 .setColorized(true)
-                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.noti_metal))
+                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.___small_))
                 .setStyle(androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle())
                 .build()
 //        var notification = NotificationCompat.Builder(context, CHANNEL_ID).apply {
