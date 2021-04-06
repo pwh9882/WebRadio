@@ -7,12 +7,15 @@ import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
 import androidx.media.session.MediaButtonReceiver
+import com.bumptech.glide.Glide
 import com.liah.webradioapplication.RadioList.radioList
 
 object WebRadioNotification {
@@ -59,6 +62,7 @@ object WebRadioNotification {
                 .setContentIntent(pendingIntent)
                 .setColor(Color.parseColor("#C0C0C0"))
                 .setColorized(true)
+                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.noti_metal))
                 .setStyle(androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle())
                 .build()
 //        var notification = NotificationCompat.Builder(context, CHANNEL_ID).apply {
