@@ -6,3 +6,5 @@
     SBS: 러브FM, 파워FM
     MBC: 표준FM, FMFU
     CBS: 뮤직FM, 표준FM
+    TBS: 표준FM
+    EBS: FM

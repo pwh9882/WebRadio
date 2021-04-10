@@ -73,19 +73,27 @@ object RadioList {
                     null
             ),
             Radio(
-                    "TBS FM",
+                    "TBS 교통방송",
                     "FM 95.1㎒",
                     "TBS",
                     "http://tbs.seoul.kr/player/live.do?channelCode=CH_A",
                     "http://58.234.158.60:1935/fmlive/myStream/playlist.m3u8",
                     null
             ),
+//            Radio(
+//                    "TBS eFM",
+//                    "FM 101.3㎒",
+//                    "TBS",
+//                    "http://tbs.seoul.kr/player/live.do?channelCode=CH_E",
+//                    "http://58.234.158.60:1935/efmlive/myStream/playlist.m3u8",
+//                    null
+//            ),
             Radio(
-                    "TBS eFM",
-                    "FM 101.3㎒",
-                    "TBS",
-                    "http://tbs.seoul.kr/player/live.do?channelCode=CH_E",
-                    "http://58.234.158.60:1935/efmlive/myStream/playlist.m3u8",
+                    "EBS FM 교육방송",
+                    "FM 104.5㎒",
+                    "EBS",
+                    "https://www.ebs.co.kr/radio/home?mainTop",
+                    "https://ebsonair.ebs.co.kr/fmradiofamilypc/familypc1m/playlist.m3u8",
                     null
             )
 

@@ -328,8 +328,18 @@ class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.On
                             .get()
                     titleText = doc.select("span.tit").text()
                 }
+                "EBS" -> {
+                    doc = Jsoup.connect("https://www.ebs.co.kr/onair/cururentOnair.json?channelCd=RADIO")
+                            .header("Content-Type", "application/json;charset=UTF-8")
+                            .method(Connection.Method.GET)
+                            .ignoreContentType(true)
+                            .userAgent("Mozilla/5.0 (Linux; U; Android 4.0.3; de-ch; HTC Sensation Build/IML74K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30")
+                            .get()
+                    var jsonText = doc.text()
+                    var jObject = JSONObject(jsonText).getJSONObject("nowProgram")
+                    titleText = jObject.get("title").toString()
+                }
             }
-//            Log.e("title: ", titleText)
             titleText
         }
     }

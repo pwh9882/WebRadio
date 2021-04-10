@@ -50,6 +50,8 @@ object WebRadioNotification {
         exitIntent.action = Actions.STOP_FOREGROUND
         val exitPendingIntent = PendingIntent.getService(context, 0, exitIntent, 0)
 
+//        BitmapFactory.decodeResource(context.resources, R.drawable.)
+
         // 알림
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setContentTitle(radioList[position].radioTitle)
@@ -62,7 +64,7 @@ object WebRadioNotification {
                 .setContentIntent(pendingIntent)
                 .setColor(Color.parseColor("#C0C0C0"))
                 .setColorized(true)
-                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.___small_))
+                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.temp__small_))
                 .setStyle(androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle())
                 .build()
 //        var notification = NotificationCompat.Builder(context, CHANNEL_ID).apply {
