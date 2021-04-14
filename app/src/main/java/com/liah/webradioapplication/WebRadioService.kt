@@ -1,8 +1,5 @@
 package com.liah.webradioapplication
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -12,17 +9,15 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.*
 import android.util.Log
-import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
 import com.liah.webradioapplication.RadioList.radioList
 import com.liah.webradioapplication.api.Radio
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONObject
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import java.time.LocalDate
 import java.util.*
 
 class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
@@ -37,6 +32,9 @@ class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.On
     private var position: Int = -1
     private var radioSubtitle = "리스트에서 선택해주세요"
 
+    private var timerTask: TimerTask? = null
+    private var timer: Timer? = null
+
     inner class LocalBinder: Binder() {
         fun getService(): WebRadioService = this@WebRadioService
     }
@@ -47,6 +45,7 @@ class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.On
         when (intent?.action) {
             Actions.START_FOREGROUND -> {
 //                Log.e(TAG, "Start Forefround 인텐트를 받음")
+                stopForegroundService()
                 startForegroundService()
             }
             Actions.STOP_FOREGROUND -> {
@@ -70,18 +69,42 @@ class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.On
                 playIntent.action = "play"
                 sendBroadcast(playIntent)
             }
-            Actions.PLAY0 -> {startForegroundService(0);position=0}
-            Actions.PLAY1 -> {startForegroundService(1);position=1}
-            Actions.PLAY2 -> {startForegroundService(2);position=2}
-            Actions.PLAY3 -> {startForegroundService(3);position=3}
-            Actions.PLAY4 -> {startForegroundService(4);position=4}
-            Actions.PLAY5 -> {startForegroundService(5);position=5}
-            Actions.PLAY6 -> {startForegroundService(6);position=6}
-            Actions.PLAY7 -> {startForegroundService(7);position=7}
-            Actions.PLAY8 -> {startForegroundService(8);position=8}
-            Actions.PLAY9 -> {startForegroundService(9);position=9}
-            Actions.PLAY10 -> {startForegroundService(10);position=10}
-            Actions.PLAY11 -> {startForegroundService(11);position=11}
+            Actions.PLAY0 -> {
+                startForegroundService(0);position = 0
+            }
+            Actions.PLAY1 -> {
+                startForegroundService(1);position = 1
+            }
+            Actions.PLAY2 -> {
+                startForegroundService(2);position = 2
+            }
+            Actions.PLAY3 -> {
+                startForegroundService(3);position = 3
+            }
+            Actions.PLAY4 -> {
+                startForegroundService(4);position = 4
+            }
+            Actions.PLAY5 -> {
+                startForegroundService(5);position = 5
+            }
+            Actions.PLAY6 -> {
+                startForegroundService(6);position = 6
+            }
+            Actions.PLAY7 -> {
+                startForegroundService(7);position = 7
+            }
+            Actions.PLAY8 -> {
+                startForegroundService(8);position = 8
+            }
+            Actions.PLAY9 -> {
+                startForegroundService(9);position = 9
+            }
+            Actions.PLAY10 -> {
+                startForegroundService(10);position = 10
+            }
+            Actions.PLAY11 -> {
+                startForegroundService(11);position = 11
+            }
 
             Actions.GET_INFO -> {
                 val infoIntent = Intent()
@@ -103,7 +126,7 @@ class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.On
         var hlsUrl = radio.radioHlsSlug
 
         radioSubtitle = parseTitle(radio)
-//            Log.e("radioSubTitle", radioSubtitle)
+
         if (hlsUrl == null) {
             hlsUrl = parseJSON(radio)
         }
@@ -120,11 +143,9 @@ class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.On
         titleIntent.action = "title"
         titleIntent.putExtra("title", radioSubtitle)
         sendBroadcast(titleIntent)
-
-
-
-
-
+//        val runnable: Runnable = Runnable {
+//
+//        }
     }
 
     /** Called when MediaPlayer is ready */
@@ -179,6 +200,34 @@ class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.On
             startForeground(NOTIFICATION_ID, notification)
         }
 
+        val resetCal = Calendar.getInstance()
+        resetCal.set(Calendar.MINUTE, Calendar.getInstance().time.minutes+1)
+        resetCal.set(Calendar.SECOND, 1)
+        val date: Date = resetCal.time
+
+
+        timerTask?.cancel()
+        timer?.cancel()
+
+        timerTask = object : TimerTask() {
+            override fun run() {
+                val updatedRadioSubtitle = parseTitle(radioList[position])
+                Log.e("$radioSubtitle ->", updatedRadioSubtitle)
+                if (radioSubtitle != updatedRadioSubtitle){
+                    radioSubtitle = updatedRadioSubtitle
+                    val notification = WebRadioNotification.createNotification(this@WebRadioService, position, radioSubtitle)
+                    startForeground(WebRadioService.NOTIFICATION_ID, notification)
+                    Log.e("Title Changed!", updatedRadioSubtitle)
+                    val titleIntent = Intent()
+                    titleIntent.action = "title"
+                    titleIntent.putExtra("title", radioSubtitle)
+                    sendBroadcast(titleIntent)
+                }
+                Log.e("TIMER", "${Date()}, $updatedRadioSubtitle")
+            }
+        }
+        timer = Timer(true)
+        timer!!.scheduleAtFixedRate(timerTask, date, 60000) // 1분마다
     }
 
     private fun stopForegroundService() {
@@ -227,7 +276,8 @@ class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.On
             hlsUrl
         }
     }
-    private fun parseTitle(radio: Radio): String = runBlocking {
+
+    fun parseTitle(radio: Radio): String = runBlocking {
         return@runBlocking withContext(Dispatchers.IO){
 //            Log.e("parseTitle", "")
             var titleText = ""
@@ -285,7 +335,7 @@ class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.On
                             .ignoreContentType(true)
                             .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36 Edg/89.0.774.68")
                             .get()
-                    var localDate = Calendar.getInstance().time.hours*3600 + Calendar.getInstance().time.minutes*60 + Calendar.getInstance().time.seconds
+                    var localDate = Calendar.getInstance().time.hours * 3600 + Calendar.getInstance().time.minutes * 60 + Calendar.getInstance().time.seconds
 //                    Log.e("time: ", localDate.toString())
                     var aspText = doc.text()
                     var textList = aspText.split(" ")
@@ -295,29 +345,28 @@ class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.On
                     var start = 0
                     var end = 7200
                     var endIndex = 1
-                    for (i: Int in 2 until textList.size){
+                    for (i: Int in 2 until textList.size) {
 //                        Log.e("ith: ", "===============")
 //                        Log.e("ith: ", textList[i])
 //                        Log.e("start: ", start.toString())
 //                        Log.e("end: ", end.toString())
-                        if (localDate in (start) until end+1) {
-                            titleText = textList[endIndex+2]
+                        if (localDate in (start) until end + 1) {
+                            titleText = textList[endIndex + 2]
                             break
                         }
                         if (start == end) {
-                            end = textList[i-1].toInt()
+                            end = textList[i - 1].toInt()
                         }
-                        if (textList[i] == end.toString()){
+                        if (textList[i] == end.toString()) {
                             start = "$end".toInt()
-                            endIndex = i+1
+                            endIndex = i + 1
                         }
                     }
-                    for (i: Int in endIndex+3 until textList.size){
+                    for (i: Int in endIndex + 3 until textList.size) {
                         if (textList[i].startsWith("http")) break
+                        else if (textList[i].startsWith("/sermon/")) break
                         titleText += " ${textList[i]}"
                     }
-
-
                 }
                 "TBS" -> {
                     doc = Jsoup.connect(radio.radioWebSlug)

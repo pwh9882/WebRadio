@@ -26,6 +26,15 @@ import com.liah.webradioapplication.api.FullscreenableChromeClient
 import com.liah.webradioapplication.api.Radio
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.list_radio.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
+import org.jsoup.Connection
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import java.util.*
 import kotlin.system.exitProcess
 
 
@@ -197,11 +206,154 @@ class MainActivity : AppCompatActivity() {
             exitProcess(-1)
         }
 
+
+        val resetCal = Calendar.getInstance()
+        resetCal.set(Calendar.MINUTE, Calendar.getInstance().time.minutes+1)
+        resetCal.set(Calendar.SECOND, 0)
+
+        val date: Date = resetCal.time
+
+//        val timerTask: TimerTask = object : TimerTask() {
+//            override fun run() {
+//                var curRadio: Radio? = null
+//                for(radio: Radio in radioList){
+//                    if (radio.radioTitle == tv_info_radioTitle.text) curRadio = radio
+//                }
+//                val updatedRadioSubtitle = parseTitle(curRadio)
+//                Log.e("${tv_info_radioSubject.text}", updatedRadioSubtitle)
+//                if (tv_info_radioSubject.text != updatedRadioSubtitle){
+////                    val notification = WebRadioNotification.createNotification(this@WebRadioService, position, radioSubtitle)
+////                    startForeground(WebRadioService.NOTIFICATION_ID, notification)
+//                    Log.e("Title Changed!", "$updatedRadioSubtitle")
+//                }
+//                Log.e("TIMER", "${Date()}, $updatedRadioSubtitle")
+//            }
+//        }
+//        val timer = Timer(true)
+//        timer.scheduleAtFixedRate(timerTask, date, 60000) // 1분마다
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
 //        unregisterReceiver(mBroadcastReceiver)
         unregisterReceiver(playerBroadcastReceiver)
+    }
+
+    fun parseTitle(radio: Radio?): String = runBlocking {
+        return@runBlocking withContext(Dispatchers.IO){
+//            Log.e("parseTitle", "")
+            var titleText = "리스트에서 선택해주세요"
+            val doc: Document
+            if (radio != null) {
+                when (radio.radioType) {
+                    "SBS" -> {
+                        doc = Jsoup.connect(radio.radioApiSlug)
+                                .header("Content-Type", "application/json;charset=UTF-8")
+                                .method(Connection.Method.GET)
+                                .ignoreContentType(true)
+                                .userAgent("Mozilla/5.0 (Linux; U; Android 4.0.3; de-ch; HTC Sensation Build/IML74K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30")
+                                .get()
+                        var jsonText = doc.text()
+                        var jObject = JSONObject(jsonText)
+                        titleText = jObject.getJSONObject("onair").getJSONObject("info").get("title").toString()
+
+                    }
+                    "KBS" -> {
+                        doc = Jsoup.connect("http://static.api.kbs.co.kr/mediafactory/v1/schedule/onair_now?rtype=jsonp&channel_code=21,22,24,25&local_station_code=00&callback=getChannelInfoList")
+                                .header("Content-Type", "application/json;charset=UTF-8")
+                                .method(Connection.Method.GET)
+                                .ignoreContentType(true)
+                                .userAgent("Mozilla/5.0 (Linux; U; Android 4.0.3; de-ch; HTC Sensation Build/IML74K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30")
+                                .get()
+                        var jsonText = doc.text()
+                        jsonText = jsonText.substringAfter("(").substringBefore(");")
+                        var jObject = JSONArray(jsonText)
+                        titleText = jObject.getJSONObject(radioList.indexOf(radio)).getJSONArray("schedules").getJSONObject(0).get("program_title").toString()
+
+                    }
+                    "MBC" -> {
+                        var url: String = if (radioList.indexOf(radio) == 4) {
+                            "http://control.imbc.com/Schedule/Radio/Time?sType=FM"
+                        } else
+                            "http://control.imbc.com/Schedule/Radio/Time?sType=FM4U"
+                        doc = Jsoup.connect(url)
+                                .header("Content-Type", "application/json;charset=UTF-8")
+                                .method(Connection.Method.GET)
+                                .ignoreContentType(true)
+                                .userAgent("Mozilla/5.0 (Linux; U; Android 4.0.3; de-ch; HTC Sensation Build/IML74K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30")
+                                .get()
+                        var jsonText = doc.text()
+                        var jObject = JSONArray(jsonText)
+                        titleText = jObject.getJSONObject(0).get("Title").toString()
+                    }
+                    "CBS" -> {
+                        var url: String = if (radioList.indexOf(radio) == 8) {
+                            "http://www.cbs.co.kr/cbsplayer/rainbow/widget/timetable.asp?ch=2"
+                        } else
+                            "http://www.cbs.co.kr/cbsplayer/rainbow/widget/timetable.asp?ch=4"
+                        doc = Jsoup.connect(url)
+                                .header("Content-Type", "application/json;charset=UTF-8")
+                                .method(Connection.Method.POST)
+                                .ignoreContentType(true)
+                                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36 Edg/89.0.774.68")
+                                .get()
+                        var localDate = Calendar.getInstance().time.hours*3600 + Calendar.getInstance().time.minutes*60 + Calendar.getInstance().time.seconds
+//                    Log.e("time: ", localDate.toString())
+                        var aspText = doc.text()
+                        var textList = aspText.split(" ")
+
+//                    Log.e("lines", textList.size.toString())
+
+                        var start = 0
+                        var end = 7200
+                        var endIndex = 1
+                        for (i: Int in 2 until textList.size){
+//                        Log.e("ith: ", "===============")
+//                        Log.e("ith: ", textList[i])
+//                        Log.e("start: ", start.toString())
+//                        Log.e("end: ", end.toString())
+                            if (localDate in (start) until end+1) {
+                                titleText = textList[endIndex+2]
+                                break
+                            }
+                            if (start == end) {
+                                end = textList[i-1].toInt()
+                            }
+                            if (textList[i] == end.toString()){
+                                start = "$end".toInt()
+                                endIndex = i+1
+                            }
+                        }
+                        for (i: Int in endIndex+3 until textList.size){
+                            if (textList[i].startsWith("http")) break
+                            else if(textList[i].startsWith("/sermon/")) break
+                            titleText += " ${textList[i]}"
+                        }
+                    }
+                    "TBS" -> {
+                        doc = Jsoup.connect(radio.radioWebSlug)
+                                .header("Content-Type", "application/json;charset=UTF-8")
+                                .method(Connection.Method.GET)
+                                .ignoreContentType(true)
+                                .userAgent("Mozilla/5.0 (Linux; U; Android 4.0.3; de-ch; HTC Sensation Build/IML74K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30")
+                                .get()
+                        titleText = doc.select("span.tit").text()
+                    }
+                    "EBS" -> {
+                        doc = Jsoup.connect("https://www.ebs.co.kr/onair/cururentOnair.json?channelCd=RADIO")
+                                .header("Content-Type", "application/json;charset=UTF-8")
+                                .method(Connection.Method.GET)
+                                .ignoreContentType(true)
+                                .userAgent("Mozilla/5.0 (Linux; U; Android 4.0.3; de-ch; HTC Sensation Build/IML74K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30")
+                                .get()
+                        var jsonText = doc.text()
+                        var jObject = JSONObject(jsonText).getJSONObject("nowProgram")
+                        titleText = jObject.get("title").toString()
+                    }
+                }
+            }
+            titleText
+        }
     }
 }
