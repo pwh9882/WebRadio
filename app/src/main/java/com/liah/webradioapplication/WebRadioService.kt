@@ -201,8 +201,8 @@ class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.On
         }
 
         val resetCal = Calendar.getInstance()
-        resetCal.set(Calendar.MINUTE, Calendar.getInstance().time.minutes+1)
-        resetCal.set(Calendar.SECOND, 1)
+//        resetCal.set(Calendar.MINUTE, 1)
+        resetCal.set(Calendar.SECOND, Calendar.getInstance().time.seconds+3)
         val date: Date = resetCal.time
 
 
@@ -227,7 +227,7 @@ class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.On
             }
         }
         timer = Timer(true)
-        timer!!.scheduleAtFixedRate(timerTask, date, 60000) // 1분마다
+        timer!!.scheduleAtFixedRate(timerTask, date, 3000) // 1분마다
     }
 
     private fun stopForegroundService() {
@@ -378,7 +378,7 @@ class WebRadioService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.On
                     titleText = doc.select("span.tit").text()
                 }
                 "EBS" -> {
-                    doc = Jsoup.connect("https://www.ebs.co.kr/onair/cururentOnair.json?channelCd=RADIO")
+                    doc = Jsoup.connect("http://www.ebs.co.kr/onair/cururentOnair.json?channelCd=RADIO")
                             .header("Content-Type", "application/json;charset=UTF-8")
                             .method(Connection.Method.GET)
                             .ignoreContentType(true)

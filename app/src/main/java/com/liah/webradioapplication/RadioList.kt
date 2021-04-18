@@ -92,8 +92,8 @@ object RadioList {
                     "EBS FM 교육방송",
                     "FM 104.5㎒",
                     "EBS",
-                    "https://www.ebs.co.kr/radio/home?mainTop",
-                    "https://ebsonair.ebs.co.kr/fmradiofamilypc/familypc1m/playlist.m3u8",
+                    "http://www.ebs.co.kr/radio/home?mainTop",
+                    "http://ebsonair.ebs.co.kr/fmradiofamilypc/familypc1m/playlist.m3u8",
                     null
             )
 
