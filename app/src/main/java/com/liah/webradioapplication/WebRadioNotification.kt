@@ -4,7 +4,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.PendingIntent.FLAG_UPDATE_CURRENT
+import android.app.PendingIntent.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -33,22 +33,22 @@ object WebRadioNotification {
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         notificationIntent.putExtra("read", "true")
 
-        val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE)
 
 
 
         // 각 버튼들에 관한 Intent
         val stopIntent = Intent(context, WebRadioService::class.java)
         stopIntent.action = Actions.STOP
-        val stopPendingIntent = PendingIntent.getService(context, 0, stopIntent, 0)
+        val stopPendingIntent = PendingIntent.getService(context, 0, stopIntent, 0 or FLAG_IMMUTABLE)
 
         val playIntent = Intent(context, WebRadioService::class.java)
         playIntent.action = Actions.PLAY
-        val playPendingIntent = PendingIntent.getService(context, 0, playIntent, 0)
+        val playPendingIntent = PendingIntent.getService(context, 0, playIntent, 0 or FLAG_IMMUTABLE)
 
         val exitIntent = Intent(context, WebRadioService::class.java)
         exitIntent.action = Actions.STOP_FOREGROUND
-        val exitPendingIntent = PendingIntent.getService(context, 0, exitIntent, 0)
+        val exitPendingIntent = PendingIntent.getService(context, 0, exitIntent, 0 or FLAG_IMMUTABLE)
 
 //        BitmapFactory.decodeResource(context.resources, R.drawable.)
 

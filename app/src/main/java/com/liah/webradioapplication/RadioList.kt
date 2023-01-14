@@ -8,25 +8,25 @@ object RadioList {
                     "KBS 제1라디오", "FM 97.3㎒", "KBS",
                     "http://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=21#refresh",
                     null,
-                    "http://cfpwwwapi.kbs.co.kr/api/v1/landing/live/channel_code/21"
+                    "https://cfpwwwapi.kbs.co.kr/api/v1/landing/live/channel_code/21/"
             ),
             Radio(
                     "KBS 제2라디오", "FM 106.1㎒", "KBS",
                     "http://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=22#refresh",
                     null,
-                    "http://cfpwwwapi.kbs.co.kr/api/v1/landing/live/channel_code/22"
+                    "https://cfpwwwapi.kbs.co.kr/api/v1/landing/live/channel_code/22/"
             ),
             Radio(
                     "KBS 1FM", "FM 93.1㎒", "KBS",
                     "http://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=24#refresh",
                     null,
-                    "http://cfpwwwapi.kbs.co.kr/api/v1/landing/live/channel_code/24"
+                    "https://cfpwwwapi.kbs.co.kr/api/v1/landing/live/channel_code/24/"
             ),
             Radio(
                     "KBS 2FM", "FM 89.1㎒", "KBS",
                     "http://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=25#refresh",
                     null,
-                    "http://cfpwwwapi.kbs.co.kr/api/v1/landing/live/channel_code/25"
+                    "https://cfpwwwapi.kbs.co.kr/api/v1/landing/live/channel_code/25/"
             ),
             Radio(
                     "MBC 라디오",
