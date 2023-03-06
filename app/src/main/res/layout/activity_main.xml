@@ -68,8 +68,6 @@
                     android:id="@+id/tv_info_radioTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginBottom="32dp"
                     android:gravity="center"
                     android:text="라디오"
                     android:textColor="@color/white"
@@ -139,13 +137,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.liah.webradioapplication.api.BackgroundWebView
-                android:id="@+id/wv_backgrounWebview"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-
-                app:layout_constraintBottom_toBottomOf="parent" />
-
             <TextView
                 android:id="@+id/tv_loading"
                 android:layout_width="wrap_content"
@@ -180,6 +171,33 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+            <TextView
+                android:id="@+id/tv_debug"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:text="DEBUG"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_exitApp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="EXIT"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
